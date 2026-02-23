@@ -1,0 +1,69 @@
+﻿<Window
+      x:Class="WpfApp1.Views.menuWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d" 
+        Height="600" Width="900" 
+        Title="menuWindow">
+
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="0" Grid.ColumnSpan="2" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="ShoePrint" VerticalAlignment="Center" Width="25" Height="25"/>
+                <ui:TextBlock Text="Список товаров | ООО Обувь" 
+                       VerticalAlignment="Center" 
+                       FontWeight="SemiBold"
+                       Margin="15,0" 
+                       FontSize="14" 
+                       Foreground="#444444"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
+            <StackPanel>
+                <ui:Button Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" Margin="10,10,0,20">
+                    <materialDesign:PackIcon Kind="Menu" Width="24" Height="24" Foreground="Gray"/>
+                </ui:Button>
+
+                <Button x:Name="navProductList" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="15,10" Click="navProductList_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Store" Margin="0,0,15,0"/>
+                        <ui:TextBlock Text="Список товаров"/>
+                    </StackPanel>
+                </Button>
+
+                <ui:Button x:Name="navOrderList" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="15,10" Click="navOrderList_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ClipboardListOutline" Margin="0,0,15,0"/>
+                        <ui:TextBlock Text="Список заказов"/>
+                    </StackPanel>
+                </ui:Button>
+
+                <ui:Button x:Name="navNewProduct" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="15,10" Click="navNewProduct_click">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Plus" Margin="0,0,15,0"/>
+                        <ui:TextBlock Text="Добавить товар"/>
+                    </StackPanel>
+                </ui:Button>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1" Grid.Column="1" Background="#F9F9F9">
+            <Frame x:Name="navMain" Content="Frame" Source="/Views/Pages/ProductListPage.xaml" />
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,48 @@
+﻿<Window x:Class="WpfApp1.Views.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Вход в систему | ООО Обувь" 
+        Height="450" Width="400"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,25,0,10" HorizontalAlignment="Center">
+            <ui:TextBlock FontFamily="Times New Roman" FontSize="24">
+                <Run Text="ООО &quot;Обувь&quot;"/>
+            </ui:TextBlock>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="300">
+            <ui:TextBlock Text="Логин" Margin="10,0,0,5" FontWeight="SemiBold" Foreground="Black" FontFamily="Times New Roman" HorizontalAlignment="Left"/>
+            <ui:TextBox x:Name="loginForm" materialDesign:HintAssist.Hint="Пароль" VerticalContentAlignment="Center" Height="40" Margin="5,0,0,15"/>
+            <ui:TextBlock Text="Пароль" Margin="10,0,0,5" FontWeight="SemiBold" Foreground="Black" FontFamily="Times New Roman" HorizontalAlignment="Left"/>
+            <ui:PasswordBox x:Name="passwordForm" materialDesign:HintAssist.Hint="Пароль" VerticalContentAlignment="Center" Height="40" Margin="5,0,0,15"/>
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="20,10,20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ui:Button x:Name="guestButton" Grid.Column="0" Content="Гостевой режим" 
+                    Width="Auto" Height="35" 
+                    HorizontalAlignment="Left" 
+                    Background="LightGray" Click="guestButton_Click"/>
+
+            <ui:Button x:Name="loginButton" Grid.Column="1" Content="Войти" 
+                    Width="120" Height="35" 
+                    HorizontalAlignment="Right" 
+                    Background="MediumSpringGreen" Click="loginButton_Click"/>
+        </Grid>
+    </Grid>
+</Window>
