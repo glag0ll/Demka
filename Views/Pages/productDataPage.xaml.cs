@@ -1,17 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WpfApp1.Models;
 
 namespace WpfApp1.Views.Pages
@@ -19,112 +11,129 @@ namespace WpfApp1.Views.Pages
     public partial class productDataPage : Page
     {
         private string filePath;
-        private int selectedProductId;
-        public productDataPage(int? productId = null)
+        private int selectedProductId = -1;
+
+        public productDataPage()
         {
             InitializeComponent();
-            loadData();
-            if (productId != null )
+            LoadData();
+            buttonDelete.Visibility = Visibility.Collapsed;
+        }
+
+        public productDataPage(int productId) : this()
+        {
+            selectedProductId = productId;
+            LoadProduct(selectedProductId);
+            buttonDelete.Visibility = Visibility.Visible;
+        }
+
+        private void LoadProduct(int productId)
+        {
+            using (var context = new ApplicationDbContext())
             {
-                selectedProductId = (int)productId;
-                loadProduct(selectedProductId);
-                buttonDelete.Visibility = Visibility.Visible;
+                Product product = context.Products.Find(productId);
+                if (product == null) return;
+
+                productName.Text = product.Name;
+                productDescription.Text = product.Description;
+                productArticle.Text = product.Article;
+                productPrice.Value = (double)product.Price;
+                productDiscount.Value = (double)product.Discount;
+                productQuantity.Value = product.StockQuantity;
+                productUnit.Text = product.Unit;
+                productCategory.SelectedValue = product.CategoryId;
+                productManufacturer.SelectedValue = product.ManufacturerId;
+                productSupplier.SelectedValue = product.SupplierId;
+
+                string photoPath = string.IsNullOrEmpty(product.Photo)
+                    ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shopResources", "picture.png")
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shopResources", product.Photo);
+
+                if (File.Exists(photoPath))
+                {
+                    productImage.Source = new BitmapImage(new Uri(photoPath));
+                    filePath = photoPath;
+                }
             }
         }
 
-        public void loadProduct(int productId)
+        private string SaveImage(string sourcePath)
         {
-            var context = new ApplicationDbContext();
-            Product product = context.Products.Where(p => p.Id == productId).FirstOrDefault();
-
-            productName.Text = product.Name;
-            productDescription.Text = product.Description;
-            productArticle.Text = product.Article;
-            productPrice.Value = (double)product.Price;
-            productDiscount.Value = (double)product.Discount;
-            productQuantity.Value = (int)product.StockQuantity;
-            productUnit.Text = product.Unit;
-            productCategory.SelectedIndex = product.CategoryId - 1;
-            productManufacturer.SelectedIndex = product.ManufacturerId - 1;
-            productSupplier.SelectedIndex = product.SupplierId - 1;
-
-            filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shopResources", product.Photo == null ? "picture.png" : product.Photo);
-
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(filePath);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-
-            productImage.Source = bitmap;
-        }
-
-        public string saveImage(string imagePath)
-        {
-            var fileInfo = new FileInfo(imagePath);
-            var destinationPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shopResources", fileInfo.Name);
-            File.Copy(filePath, destinationPath, overwrite:true);
-
+            var fileInfo = new FileInfo(sourcePath);
+            var destPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shopResources", fileInfo.Name);
+            File.Copy(sourcePath, destPath, overwrite: true);
             return fileInfo.Name;
         }
 
-        public void loadData()
+        private void LoadData()
         {
-            var context = new ApplicationDbContext();
-            var categories = context.Categories.ToList();
-            var manufacturers = context.Manufacturers.ToList();
-            var suppliers = context.Suppliers.ToList();
+            using (var context = new ApplicationDbContext())
+            {
+                productCategory.ItemsSource = context.Categories.ToList();
+                productManufacturer.ItemsSource = context.Manufacturers.ToList();
+                productSupplier.ItemsSource = context.Suppliers.ToList();
+            }
 
-            productCategory.ItemsSource =  categories;
             productCategory.SelectedIndex = 0;
-            productManufacturer.ItemsSource = manufacturers;
             productManufacturer.SelectedIndex = 0;
-            productSupplier.ItemsSource = suppliers;
             productSupplier.SelectedIndex = 0;
         }
 
-
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(productName.Text) || string.IsNullOrWhiteSpace(productArticle.Text) || string.IsNullOrEmpty(productDescription.Text) ||
-                string.IsNullOrWhiteSpace(productPrice.Text) || string.IsNullOrWhiteSpace(productDiscount.Text) || string.IsNullOrWhiteSpace(productQuantity.Text) ||
-                string.IsNullOrWhiteSpace(productUnit.Text)) 
+            if (string.IsNullOrWhiteSpace(productName.Text) ||
+                string.IsNullOrWhiteSpace(productArticle.Text) ||
+                string.IsNullOrWhiteSpace(productDescription.Text) ||
+                productPrice.Value == null ||
+                productDiscount.Value == null ||
+                productQuantity.Value == null ||
+                string.IsNullOrWhiteSpace(productUnit.Text))
             {
                 MessageBox.Show("Заполните все поля для продолжения", "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            string imagePath = null;
-            if (!string.IsNullOrWhiteSpace(productImage.Source.ToString()))
+
+            string savedPhotoName = null;
+            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
             {
-                imagePath = saveImage(filePath);
+                savedPhotoName = SaveImage(filePath);
             }
 
-            var product = new Product
+            using (var context = new ApplicationDbContext())
             {
-                Name = productName.Text.Trim(),
-                Article = productArticle.Text.Trim(),
-                Description = productDescription.Text.Trim(),
-                Price = decimal.Parse(productPrice.Text),
-                Discount = decimal.Parse(productDiscount.Text),
-                StockQuantity = int.Parse(productQuantity.Text),
-                Unit = productUnit.Text.Trim(),
-                Photo = imagePath,
-                CategoryId = (int)productCategory.SelectedValue,
-                ManufacturerId = (int)productManufacturer.SelectedValue,
-                SupplierId = (int)productSupplier.SelectedValue
-            };
-            var context = new ApplicationDbContext();
-            if (selectedProductId == -1)
-            {
-                context.Products.Add(product);
+                Product product;
+
+                if (selectedProductId == -1)
+                {
+                    product = new Product();
+                    context.Products.Add(product);
+                }
+                else
+                {
+                    product = context.Products.Find(selectedProductId);
+                    if (product == null)
+                    {
+                        MessageBox.Show("Товар не найден", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                }
+
+                product.Name = productName.Text.Trim();
+                product.Article = productArticle.Text.Trim();
+                product.Description = productDescription.Text.Trim();
+                product.Price = (decimal)productPrice.Value;
+                product.Discount = (decimal)productDiscount.Value;
+                product.StockQuantity = (int)productQuantity.Value;
+                product.Unit = productUnit.Text.Trim();
+                if (savedPhotoName != null)
+                    product.Photo = savedPhotoName;
+
+                product.CategoryId = (int)productCategory.SelectedValue;
+                product.ManufacturerId = (int)productManufacturer.SelectedValue;
+                product.SupplierId = (int)productSupplier.SelectedValue;
+
+                context.SaveChanges();
             }
-            else
-            {
-                product.Id = selectedProductId;
-                context.Products.Update(product);
-            }
-            context.Products.Add(product);
-            context.SaveChanges();
 
             MessageBox.Show("Информация о товаре сохранена успешно", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
             NavigationService.Navigate(new ProductListPage());
@@ -134,32 +143,32 @@ namespace WpfApp1.Views.Pages
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "Изображения (*.png; *.jpg; *.jpeg; *.gif)|*.png; *.jpg; *.jpeg; *.gif)",
+                Filter = "Изображения (*.png; *.jpg; *.jpeg; *.gif)|*.png; *.jpg; *.jpeg; *.gif",
                 Title = "Выберите изображение",
                 CheckFileExists = true,
                 Multiselect = false
             };
+
             if (dialog.ShowDialog() == true)
             {
                 filePath = dialog.FileName;
-
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(filePath);
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-
-                productImage.Source = bitmap;
+                productImage.Source = new BitmapImage(new Uri(filePath));
             }
         }
 
         private void buttonDelete_Click(object sender, RoutedEventArgs e)
         {
-            var context = new ApplicationDbContext();
+            if (selectedProductId == -1) return;
 
-            Product product = context.Products.Where(p => p.Id == selectedProductId).FirstOrDefault();
-            context.Products.Remove(product);
-            context.SaveChanges();
+            using (var context = new ApplicationDbContext())
+            {
+                var product = context.Products.Find(selectedProductId);
+                if (product != null)
+                {
+                    context.Products.Remove(product);
+                    context.SaveChanges();
+                }
+            }
 
             MessageBox.Show("Товар удалён успешно", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
             NavigationService.Navigate(new ProductListPage());

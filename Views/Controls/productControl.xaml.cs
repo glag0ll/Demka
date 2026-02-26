@@ -37,7 +37,7 @@ namespace WpfApp1.Views.Controls
             txtDescription.Text = $"Описание товара: {product.Description}";
             txtManufactirer.Text = $"Производитель: {product.Manufacturer.Name}";
             txtSupplier.Text = $"Поставщик: {product.Supplier.Name}";
-            txtPrice.Text = $"{product.Price}"; txtFinalPrice.Text = $"{finalPrice}";
+            txtPrice.Text = $"{product.Price}"; txtFinalPrice.Text = $" {finalPrice}";
             txtUnit.Text = $"Скидка: {product.Unit}";
             txtQuantity.Text = $"Количество на складе: {product.StockQuantity}";
 

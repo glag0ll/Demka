@@ -4,13 +4,32 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp1.Views.Pages"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ProductListPage">
+    <Grid x:Name="grid" Cursor="">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ui:TextBox x:Name="SearchBox" TextChanged="FilterChanged" PlaceholderText="Введите данные для поиска.." Width="250" Height="35"
+                              VerticalAlignment="Center" 
+                              HorizontalAlignment="Center"
+                              FontWeight="SemiBold"
+                              Margin="15,0" 
+                              FontSize="14" 
+                              Foreground="#444444" Cursor="IBeam"/>
+            <ComboBox x:Name="SupplierCombo" SelectionChanged="FilterChanged" Width="170" Margin="0,0,10,0" Foreground="Black"/>
+            <RadioButton x:Name="sortAsc" Checked="FilterChanged" Content="По возрастанию количества" Margin="0,0,0,25" IsChecked="True" Background="MediumSpringGreen"/>
+            <RadioButton x:Name="sortDesc" Checked="FilterChanged" Content="По убыванию количества" Margin="-210.5,25,0,0" Background="MediumSpringGreen"/>
+        </StackPanel>
 
-    <Grid>
-        <ListBox x:Name="productList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" SelectionChanged="productList_SelectionChanged">
-            
+        <ListBox Grid.Row="1" x:Name="productList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" SelectionChanged="productList_SelectionChanged">
+            <ScrollViewer>
+                
+            </ScrollViewer>
         </ListBox>
     </Grid>
 </Page>

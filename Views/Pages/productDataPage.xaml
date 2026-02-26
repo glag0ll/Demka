@@ -81,13 +81,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1" Margin="5">
                     <ui:TextBlock Text="Поставщик" Margin="0,0,0,3"/>
-                    <ComboBox Padding="5" SelectedValuePath="Id" DisplayMemberPath="Name" x:Name="productSupplier" TextElement.Foreground="Black">
-                        <ComboBox.ItemContainerStyle>
-                            <Style TargetType="ComboBoxItem">
-                                <Setter Property="Foreground" Value="Black"/>
-                            </Style>
-                        </ComboBox.ItemContainerStyle>
-                    </ComboBox>
+                    <ComboBox Padding="5" SelectedValuePath="Id" DisplayMemberPath="Name" x:Name="productSupplier" TextElement.Foreground="Black"/>
                 </StackPanel>
             </Grid>
 

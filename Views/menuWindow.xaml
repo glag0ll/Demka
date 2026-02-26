@@ -61,8 +61,10 @@
                 </ui:Button>
             </StackPanel>
         </Border>
-
-        <Grid Grid.Row="1" Grid.Column="1" Background="#F9F9F9">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,5,0">
+            
+        </StackPanel>
+        <Grid Grid.Row="1" Grid.Column="2" Background="#F9F9F9">
             <Frame x:Name="navMain" Content="Frame" Source="/Views/Pages/ProductListPage.xaml" />
         </Grid>
     </Grid>
